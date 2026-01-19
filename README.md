@@ -117,7 +117,6 @@ GET /sessions/{session_id}
 \
 \
 Result in database: \
-\
 ![Example db1](examples/2.jpg)
 \
 \
