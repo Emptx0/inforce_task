@@ -20,5 +20,6 @@ class Settings:
         "gemma3:1b"
     )
 
+    DATABASE_URL: str = os.getenv("DATABASE_URL")
 
 settings = Settings()

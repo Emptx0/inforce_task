@@ -31,30 +31,41 @@ The LLM layer is designed using **OOP patterns (factory + base interface)**, whi
 
 This approach keeps the system modular, extensible, and compatible with OpenAI-like APIs, without relying on external cloud services.
 
-
----
-
 ## Project Structure
 
 ```
 .
-├── chat.db
+├── requirements.txt
+├── .env
 └── src
-├── api
-│   ├── main.py
-│   └── routes
-│       └── chat.py
-├── db
-│   ├── db.py
-│   ├── init_db.py
-│   └── models.py
-├── llm
-│   ├── base.py
-│   ├── factory.py
-│   └── ollama_client.py
-├── schemas.py
-└── config.py
+    ├── api
+    │   └── main.cpython-312.pyc
+    │   ├── main.py
+    │   └── routes
+    │   │   └── chat.py
+    ├── cli
+    │   └── chat.py
+    ├── config.py
+    ├── db
+    │   ├── __init__.py
+    │   ├── db.py
+    │   ├── init_db.py
+    │   └── models.py
+    ├── llm
+    │   ├── __init__.py
+    │   ├── base.py
+    │   ├── factory.py
+    │   └── ollama_client.py
+    ├── schemas.py
+    └── services
+        └── chat_service.py
 ````
+
+---
+
+## Environment Variables
+
+The project is configured using a `.env` file located in the root directory.
 
 ---
 
