@@ -6,7 +6,11 @@ load_dotenv()
 
 
 class Settings:
-    LLM_PROVIDER: str = os.getenv("LLM_PROVIDER", "ollama")
+    LLM_PROVIDER: str = os.getenv(
+        "LLM_PROVIDER",
+        "ollama"
+    )
+
     OLLAMA_BASE_URL: str = os.getenv(
         "OLLAMA_BASE_URL",
         "http://localhost:11434"
