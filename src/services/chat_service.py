@@ -23,10 +23,6 @@ def send_message(
     session_id: int,
     user_message: str
 ) -> ChatSession:
-    """
-    Save user message, generate model response,
-    update token usage and cost
-    """
     chat = db.get(ChatSession, session_id)
     if not chat:
         raise ValueError("Chat session not found")
@@ -42,31 +38,30 @@ def send_message(
     db.add(user_msg)
     db.commit()
 
-    # Prepare full conversation history
     messages = [
-        {"role": m.role, "content": m.content}
-        for m in chat.messages
-    ] + [{"role": "user", "content": user_message}]
+        {"role": "user", "content": user_message}
+    ]
 
     # Call LLM
     llm_response = llm_client.chat(messages)
+
     usage = llm_response["usage"]
+    completion_tokens = usage["completion_tokens"]
 
-    total_tokens = usage["total_tokens"]
-    total_cost = total_tokens
+    message_cost = completion_tokens
 
-    # Save assistant message
+    # 4. Save assistant message
     assistant_msg = Message(
         session_id=session_id,
         role="assistant",
         content=llm_response["content"],
-        tokens=total_tokens,
-        cost=total_cost
+        tokens=completion_tokens,
+        cost=message_cost
     )
 
-    # Update session stats
-    chat.total_tokens += total_tokens
-    chat.total_cost += total_cost
+    # Update session totals
+    chat.total_tokens += completion_tokens
+    chat.total_cost += message_cost
 
     db.add(assistant_msg)
     db.commit()

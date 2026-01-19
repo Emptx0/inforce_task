@@ -1,5 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException
+
 from sqlalchemy.orm import Session
+from sqlalchemy.exc import SQLAlchemyError
 
 from src.db.db import SessionLocal
 from src.services.chat_service import create_session, send_message
@@ -24,7 +26,13 @@ def start_session(db: Session = Depends(get_db)):
     """
     Create new chat session
     """
-    chat = create_session(db)
+    try:
+        chat = create_session(db)
+    except SQLAlchemyError:
+        raise HTTPException(
+            status_code=500,
+            detail="Failed to create chat session"
+        )
 
     return ChatSessionResponse(
         session_id=chat.id,
@@ -45,8 +53,25 @@ def send_chat_message(
     """
     try:
         chat = send_message(db, session_id, payload.message)
+
     except ValueError:
-        raise HTTPException(status_code=404, detail="Chat session not found")
+        raise HTTPException(
+            status_code=404,
+            detail="Chat session not found"
+        )
+
+    except SQLAlchemyError:
+        raise HTTPException(
+            status_code=500,
+            detail="Database error while saving message"
+        )
+
+    except Exception:
+        # LLM exceptions
+        raise HTTPException(
+            status_code=500,
+            detail="Failed to generate model response"
+        )
 
     return ChatSessionResponse(
         session_id=chat.id,
@@ -64,9 +89,19 @@ def get_chat_history(
     """
     Get full chat history
     """
-    chat = db.get(ChatSession, session_id)
+    try:
+        chat = db.get(ChatSession, session_id)
+    except SQLAlchemyError:
+        raise HTTPException(
+            status_code=500,
+            detail="Database error while fetching chat session"
+        )
+
     if not chat:
-        raise HTTPException(status_code=404, detail="Chat session not found")
+        raise HTTPException(
+            status_code=404,
+            detail="Chat session not found"
+        )
 
     return ChatSessionResponse(
         session_id=chat.id,
