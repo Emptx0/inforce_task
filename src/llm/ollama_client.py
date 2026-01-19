@@ -1,9 +1,9 @@
+from src.llm.base import LLMClient
+
 import requests
 
-from typing import List, Dict
 
-
-class OllamaClient:
+class OllamaClient(LLMClient):
     def __init__(
         self,
         model: str = "gemma3:1b",
@@ -12,7 +12,7 @@ class OllamaClient:
         self.model = model
         self.base_url = base_url
 
-    def chat(self, messages: List[Dict[str, str]]) -> Dict:
+    def chat(self, messages: list[dict[str, str]]) -> dict:
         payload = {
             "model": self.model,
             "messages": messages,
@@ -26,27 +26,28 @@ class OllamaClient:
         )
         response.raise_for_status()
 
-        data = response.json()
-        answer = data["message"]["content"]
+        response_data = response.json()
+        answer = response_data["message"]["content"]
 
-        usage = self._estimate_usage(data)
+        usage = self._estimate_usage(response_data)
 
         return {
             "content": answer,
             "usage": usage
         }
 
-    def _estimate_usage(self, data: Dict) -> Dict[str, int]:
+    def _estimate_usage(self, response_data: dict) -> dict[str, int]:
         usage = {
-            "prompt_tokens": data["prompt_eval_count"],
-            "completion_tokens": data["eval_count"],
-            "total_tokens": data["prompt_eval_count"] + data["eval_count"]
+            "prompt_tokens": response_data["prompt_eval_count"],
+            "completion_tokens": response_data["eval_count"],
+            "total_tokens": response_data["prompt_eval_count"] + response_data["eval_count"]
         }
 
         return usage
 
 
-def main():
+
+def main():  # Simple test
     client = OllamaClient(model="gemma3:1b")
 
     messages = [
@@ -61,6 +62,7 @@ def main():
 
     print("=== TOKEN USAGE ===")
     print(result["usage"])
+
 
 if __name__ == "__main__":
     main()

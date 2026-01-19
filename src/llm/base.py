@@ -1,12 +1,11 @@
 from abc import ABC, abstractmethod
-from typing import List, Dict
 
 
 class LLMClient(ABC):
     @abstractmethod
-    def chat(self, messages: List[Dict[str, str]]) -> Dict:
+    def chat(self, messages: list[dict[str, str]]) -> dict[str, str]:
         """
-        Must return OpenAI-like response:
+        Returns OpenAI-like response:
         {
             "content": str,
             "usage": {
