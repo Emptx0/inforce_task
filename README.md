@@ -15,6 +15,25 @@ Designed to run **as Python modules from `src/`**.
 
 ---
 
+## ❗️ LLM Backend ❗️
+
+This project uses **Gemma 3 (1B)** running **locally via Ollama**.
+
+The LLM is accessed through a custom-written client that exposes an **OpenAI-style interface**, including:
+- `chat(messages)` format
+- role-based messages (`user`, `assistant`)
+- structured `usage` metadata (token counting)
+
+The LLM layer is designed using **OOP patterns (factory + base interface)**, which allows:
+- easy replacement of models (Gemma, LLaMA, etc.)
+- switching between local and remote providers
+- minimal changes in business logic when adding new LLM backends
+
+This approach keeps the system modular, extensible, and compatible with OpenAI-like APIs, without relying on external cloud services.
+
+
+---
+
 ## Project Structure
 
 ```
