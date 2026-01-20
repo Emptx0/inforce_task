@@ -50,7 +50,7 @@ def send_message(
 
     message_cost = completion_tokens
 
-    # 4. Save assistant message
+    # Save assistant message
     assistant_msg = Message(
         session_id=session_id,
         role="assistant",
